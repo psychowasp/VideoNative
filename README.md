@@ -1,5 +1,7 @@
 # VideoNative
 
+<!-- GitAds-Verify: PUCN19P2AIAH7TRDE5QOCM6C6N4IQARQ -->
+
 [![GitHub Release](https://img.shields.io/github/v/release/novfensec/videonative?style=flat-square&color=blue)](https://github.com/novfensec/videonative/releases)
 [![License](https://img.shields.io/github/license/novfensec/videonative?style=flat-square&color=green)](LICENSE)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/novfensec/videonative/buildozer_action.yml?style=flat-square)](https://github.com/novfensec/videonative/actions)
