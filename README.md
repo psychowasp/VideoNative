@@ -5,7 +5,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/novfensec/videonative/buildozer_action.yml?style=flat-square)](https://github.com/novfensec/videonative/actions)
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue?style=flat-square&logo=python)](https://www.python.org/)
 
-High-performance video rendering in Python powered by C++, FFmpeg, and miniaudio.
+Video rendering in Python powered by C++, FFmpeg, and miniaudio.
 
 ## Overview
 
