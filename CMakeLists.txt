@@ -23,8 +23,43 @@ if(WIN32)
 
     add_compile_definitions(NOMINMAX)
 elseif(ANDROID)
-    set(FFMPEG_INCLUDE_DIRS "${ANDROID_FFMPEG_INCLUDE}")
-    set(FFMPEG_LIB_DIR "${ANDROID_FFMPEG_LIB}")
+    if(DEFINED ANDROID_FFMPEG_INCLUDE)
+        set(FFMPEG_INCLUDE_DIRS "${ANDROID_FFMPEG_INCLUDE}")
+        set(FFMPEG_LIB_DIR "${ANDROID_FFMPEG_LIB}")
+    else()
+        if(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+            set(_libffmpeg_platform "android_24_arm64_v8a")
+        elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+            set(_libffmpeg_platform "android_24_x86_64")
+        else()
+            message(FATAL_ERROR "Unsupported Android processor for libffmpeg: ${CMAKE_SYSTEM_PROCESSOR}")
+        endif()
+
+        set(_libffmpeg_dir "${CMAKE_CURRENT_BINARY_DIR}/_libffmpeg")
+
+        if(NOT EXISTS "${_libffmpeg_dir}/.includes")
+            set(_libffmpeg_ver "8.0.1")
+            set(_libffmpeg_whl "${_libffmpeg_dir}/libffmpeg.whl")
+            set(_libffmpeg_url
+                "https://api.anaconda.org/download/PySwift/libffmpeg/${_libffmpeg_ver}/libffmpeg-${_libffmpeg_ver}-py3-none-${_libffmpeg_platform}.whl")
+            message(STATUS "Downloading libffmpeg ${_libffmpeg_ver} for ${_libffmpeg_platform} ...")
+            file(MAKE_DIRECTORY "${_libffmpeg_dir}")
+            file(DOWNLOAD "${_libffmpeg_url}" "${_libffmpeg_whl}"
+                STATUS _dl_status
+                TLS_VERIFY ON
+            )
+            list(GET _dl_status 0 _dl_code)
+            list(GET _dl_status 1 _dl_msg)
+            if(NOT _dl_code EQUAL 0)
+                message(FATAL_ERROR "Failed to download libffmpeg: ${_dl_msg}\n  URL: ${_libffmpeg_url}")
+            endif()
+            file(ARCHIVE_EXTRACT INPUT "${_libffmpeg_whl}" DESTINATION "${_libffmpeg_dir}")
+            file(REMOVE "${_libffmpeg_whl}")
+        endif()
+
+        set(FFMPEG_INCLUDE_DIRS "${_libffmpeg_dir}/.includes/ffmpeg")
+        set(FFMPEG_LIB_DIR      "${_libffmpeg_dir}/.libs")
+    endif()
 else()
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(FFMPEG REQUIRED IMPORTED_TARGET 
@@ -52,6 +87,9 @@ if(WIN32 OR ANDROID)
         swscale
         swresample
     )
+    if(ANDROID)
+        target_link_libraries(videonative PRIVATE OpenSLES log)
+    endif()
 else()
     target_link_libraries(videonative PRIVATE 
         PkgConfig::FFMPEG

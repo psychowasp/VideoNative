@@ -13,7 +13,8 @@ authors = [
     { name = "Kartavya Shukla" }
 ]
 dependencies = [
-    "numpy>=1.20.0"
+    "numpy>=1.20.0",
+    "libffmpeg ; sys_platform == 'android'",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -34,3 +35,10 @@ wheel.expand-macos-universal-tags = true
 [tool.scikit-build.cmake.define]
 CMAKE_CXX_STANDARD = "17"
 CMAKE_CXX_STANDARD_REQUIRED = "ON"
+
+[tool.cibuildwheel]
+environment = { PIP_EXTRA_INDEX_URL = "https://pypi.anaconda.org/pyswift/simple" }
+
+[tool.cibuildwheel.android]
+archs = ["arm64_v8a", "x86_64"]
+environment = { ANDROID_API_LEVEL = "24" }
