@@ -1,11 +1,16 @@
 # VideoNative
 
+<!-- GitAds-Verify: PUCN19P2AIAH7TRDE5QOCM6C6N4IQARQ -->
+
 [![GitHub Release](https://img.shields.io/github/v/release/novfensec/videonative?style=flat-square&color=blue)](https://github.com/novfensec/videonative/releases)
 [![License](https://img.shields.io/github/license/novfensec/videonative?style=flat-square&color=green)](LICENSE)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/novfensec/videonative/buildozer_action.yml?style=flat-square)](https://github.com/novfensec/videonative/actions)
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue?style=flat-square&logo=python)](https://www.python.org/)
 
-High-performance video rendering in Python powered by C++, FFmpeg, and miniaudio.
+Video rendering in Python powered by C++, FFmpeg, and miniaudio.
+
+## GitAds Sponsored
+[![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=novfensec/videonative@github)](https://gitads.dev/v1/ad-track?source=novfensec/videonative@github)
 
 ## Overview
 
