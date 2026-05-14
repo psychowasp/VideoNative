@@ -18,8 +18,6 @@ High-performance video rendering in Python powered by C++, FFmpeg, and miniaudio
 #### Runtime requirements
 * [Numpy](https://numpy.org/)
 
----
-
 > [!TIP]
 > Looking for a complete implementation? Check out the **[CarbonPlayer](https://github.com/novfensec/CarbonPlayer)** repository for a full-fledged video player example built using this library.
 
