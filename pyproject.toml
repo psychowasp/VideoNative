@@ -29,8 +29,15 @@ classifiers = [
 Homepage = "https://github.com/Novfensec/videonative"
 Repository = "https://github.com/Novfensec"
 
+[project.optional-dependencies]
+example = ["kivy", "carbonkivy"]
+
+[project.scripts]
+videonative-example = "videonative_example.main:main"
+
 [tool.scikit-build]
 wheel.expand-macos-universal-tags = true
+wheel.packages = ["videonative_example"]
 
 [tool.scikit-build.cmake.define]
 CMAKE_CXX_STANDARD = "17"
@@ -42,3 +49,8 @@ environment = { PIP_EXTRA_INDEX_URL = "https://pypi.anaconda.org/pyswift/simple"
 [tool.cibuildwheel.android]
 archs = ["arm64_v8a", "x86_64"]
 environment = { ANDROID_API_LEVEL = "24" }
+
+[tool.cibuildwheel.macos]
+archs = ["arm64", "x86_64", "universal2"]
+before-all = "bash scripts/build-ffmpeg-macos.sh"
+environment = { PKG_CONFIG_PATH = "/tmp/ffmpeg-macos/lib/pkgconfig", MACOSX_DEPLOYMENT_TARGET = "11.0" }

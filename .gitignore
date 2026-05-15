@@ -183,3 +183,4 @@ experiments/
 libffmpeg-8.0.1-py3-none-android_24_arm64_v8a/
 wheelhouse/
 .DS_Store
+ffmpeg-8.0.1

@@ -271,7 +271,7 @@ class VideoApp(CarbonApp):
         Window.bind(on_key_down=self._on_key_down)
 
     def build(self):
-        return Builder.load_file(os.path.join(self.directory, "main.kv"))
+        return Builder.load_file(os.path.join(os.path.dirname(__file__), "main.kv"))
 
     def _on_key_down(self, window, key, scancode, codepoint, modifiers):
         if key == 292: # F11
