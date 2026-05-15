@@ -12,7 +12,9 @@
 #include <vector>
 #include <algorithm>
 
+#ifndef VIDEONATIVE_SEPARATE_MINIAUDIO_IMPL
 #define MINIAUDIO_IMPLEMENTATION
+#endif
 #include "miniaudio.h"
 
 extern "C"

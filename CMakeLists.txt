@@ -60,6 +60,44 @@ elseif(ANDROID)
         set(FFMPEG_INCLUDE_DIRS "${_libffmpeg_dir}/.includes/ffmpeg")
         set(FFMPEG_LIB_DIR      "${_libffmpeg_dir}/.libs")
     endif()
+elseif(APPLE AND CMAKE_CXX_COMPILER MATCHES "apple-ios")
+    # Extract arch from compiler binary name, e.g. arm64-apple-ios-clang++ -> arm64
+    get_filename_component(_ios_compiler_name "${CMAKE_CXX_COMPILER}" NAME)
+    string(REGEX MATCH "^([^-]+)-apple-ios" _m "${_ios_compiler_name}")
+    set(_ios_arch "${CMAKE_MATCH_1}")
+
+    # Determine device vs simulator from the compiler path
+    if(CMAKE_CXX_COMPILER MATCHES "simulator")
+        set(_ios_system "iphonesimulator")
+    else()
+        set(_ios_system "iphoneos")
+    endif()
+
+    set(_libffmpeg_platform "ios_13_0_${_ios_arch}_${_ios_system}")
+    set(_libffmpeg_dir "${CMAKE_CURRENT_BINARY_DIR}/_libffmpeg")
+
+    if(NOT EXISTS "${_libffmpeg_dir}/.includes")
+        set(_libffmpeg_ver "8.0.1")
+        set(_libffmpeg_whl "${_libffmpeg_dir}/libffmpeg.whl")
+        set(_libffmpeg_url
+            "https://api.anaconda.org/download/PySwift/libffmpeg/${_libffmpeg_ver}/libffmpeg-${_libffmpeg_ver}-py3-none-${_libffmpeg_platform}.whl")
+        message(STATUS "Downloading libffmpeg ${_libffmpeg_ver} for ${_libffmpeg_platform} ...")
+        file(MAKE_DIRECTORY "${_libffmpeg_dir}")
+        file(DOWNLOAD "${_libffmpeg_url}" "${_libffmpeg_whl}"
+            STATUS _dl_status
+            TLS_VERIFY ON
+        )
+        list(GET _dl_status 0 _dl_code)
+        list(GET _dl_status 1 _dl_msg)
+        if(NOT _dl_code EQUAL 0)
+            message(FATAL_ERROR "Failed to download libffmpeg: ${_dl_msg}\n  URL: ${_libffmpeg_url}")
+        endif()
+        file(ARCHIVE_EXTRACT INPUT "${_libffmpeg_whl}" DESTINATION "${_libffmpeg_dir}")
+        file(REMOVE "${_libffmpeg_whl}")
+    endif()
+
+    set(FFMPEG_INCLUDE_DIRS "${_libffmpeg_dir}/.includes/ffmpeg")
+    set(FFMPEG_FRAMEWORK_DIR "${_libffmpeg_dir}/.frameworks")
 else()
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(FFMPEG REQUIRED IMPORTED_TARGET 
@@ -90,6 +128,22 @@ if(WIN32 OR ANDROID)
     if(ANDROID)
         target_link_libraries(videonative PRIVATE OpenSLES log)
     endif()
+elseif(APPLE AND CMAKE_CXX_COMPILER MATCHES "apple-ios")
+    # miniaudio's Core Audio backend needs ObjC++ (AVFoundation).
+    # Compile it in a separate .mm translation unit to avoid the AVMediaType
+    # name clash between FFmpeg (libavutil) and Apple's AVFoundation.
+    enable_language(OBJCXX)
+    target_sources(videonative PRIVATE src/miniaudio_impl.mm)
+    target_compile_definitions(videonative PRIVATE VIDEONATIVE_SEPARATE_MINIAUDIO_IMPL)
+    target_include_directories(videonative PRIVATE ${FFMPEG_INCLUDE_DIRS})
+    # The xcframeworks are headers-only at build time; FFmpeg symbols are resolved
+    # at app-link time via -undefined dynamic_lookup (injected by pybind11/scikit-build-core).
+    # Only system frameworks need explicit linking.
+    target_link_libraries(videonative PRIVATE
+        "-framework CoreAudio"
+        "-framework AudioToolbox"
+        "-framework AVFoundation"
+    )
 else()
     target_link_libraries(videonative PRIVATE 
         PkgConfig::FFMPEG

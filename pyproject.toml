@@ -15,6 +15,7 @@ authors = [
 dependencies = [
     "numpy>=1.20.0",
     "libffmpeg ; sys_platform == 'android'",
+    "libffmpeg ; sys_platform == 'ios'",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -54,3 +55,7 @@ environment = { ANDROID_API_LEVEL = "24" }
 archs = ["arm64", "x86_64", "universal2"]
 before-all = "bash scripts/build-ffmpeg-macos.sh"
 environment = { PKG_CONFIG_PATH = "/tmp/ffmpeg-macos/lib/pkgconfig", MACOSX_DEPLOYMENT_TARGET = "11.0" }
+
+[tool.cibuildwheel.ios]
+archs = ["arm64_iphoneos", "arm64_iphonesimulator", "x86_64_iphonesimulator"]
+xbuild-tools = ["cmake", "ninja"]
