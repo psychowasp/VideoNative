@@ -27,7 +27,7 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/Novfensec/videonative"
-Repository = "https://github.com/Novfensec"
+Repository = "https://github.com/Novfensec/videonative"
 
 [project.optional-dependencies]
 example = ["kivy", "carbonkivy"]
